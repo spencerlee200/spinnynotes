@@ -75,7 +75,7 @@ function saveNoteBook(notebook) {
 
 router.get('/', function(req, res, next) {
   NoteBook.find(function (err, notebooks){
-    res.render('home', {title: 'Notes +', msg: 'Welcome to Notes +',user: req.user, notebooks: notebooks});
+    res.render('home', {title: 'Spinny Notes', msg: 'Welcome to Spinny Notes',user: req.user, notebooks: notebooks});
   });
 });
 
