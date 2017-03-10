@@ -9,11 +9,13 @@ html
       if notebook.access == "false"
         section(style="margin-top: 15px")
             a.btn.gh-btn.pull-right(href="/auth/github") Login with Github
+            a.btn.gh-btn.pull-right(href="/auth/google") Login with Google
 
             img.img-responsive.private(src="/IMG/private.png")
       else
         section(style="margin-top: 15px")
             a.btn.gh-btn.pull-right(href="/auth/github") Login with Github
+            a.btn.gh-btn.pull-right(href="/auth/google") Login with Google
 
         p.pTitle= notebook.title
           div.col-md-8.col-md-offset-2
