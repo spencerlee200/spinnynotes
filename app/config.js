@@ -4,4 +4,10 @@ var github = {
   callbackURL: "http://spinnynotes.com/auth/github/callback"
 }
 
-module.exports = {github: github};
+var google = {
+  clientID: '708247688332-d0pj8ho0q4t4e8qcp59k0gognv1dl5du.apps.googleusercontent.com',
+  clientSecret: 'bpMYJojvU-oVypOmtp4g9isU',
+  callbackURL: 'http://spinnynotes.com/google/callback/'
+}
+
+module.exports = {github: github, google: google};
