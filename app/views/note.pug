@@ -9,7 +9,6 @@ html
       if note.access == false
         section(style="margin-top: 15px")
             a.btn.gh-btn.pull-right(href="/auth/github") Login with Github
-            a.btn.gh-btn.pull-right(href="/auth/google") Login with Google
 
         div.row.text-center
           img.img-responsive.private(src="/IMG/private.png")
@@ -17,7 +16,6 @@ html
       else
         section(style="margin-top: 15px")
             a.btn.gh-btn.pull-right(href="/auth/github") Login with Github
-            a.btn.gh-btn.pull-right(href="/auth/google") Login with Google
 
         if note.type == "Default"
           div.col-md-8.col-md-offset-2
