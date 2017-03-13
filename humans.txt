@@ -1,0 +1,10 @@
+/* TEAM */
+
+Web Developer: Spencer Lee
+Site: http://thespencerlee.me
+Location: Orlando, FL, USA
+
+/* SITE */
+
+Last update: 03/13/2017
+Components: node, mongoose, express, pug
