@@ -263,4 +263,4 @@ chmod +x hooks/post-receive
 
 <a name="7"></a>
 ## Deployment
-Thats it for the set up. Next you have to actually deploy the project from your local machine. You can see how I did that [here].
+Thats it for the set up. Next you have to actually deploy the project from your local machine. You can see how I did that [here](https://github.com/spencerlee200/spinnynotes).
