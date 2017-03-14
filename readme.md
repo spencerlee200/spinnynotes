@@ -5,7 +5,7 @@
 * You must have a [Ubuntu 16.04.02](https://github.com/spencerlee200/spinnynotes/blob/master/setup.md) server set up
 
 ##1. Setting up your local repo
-Lets get the easy part out of the way. Navigate to the folder where you want to keep your local files and clone down your git repository. If you don't already have a git repository go create one making sure to initialise it with a readme.md file and clone it down with into your desired folder. Go ahead and cd into that project folder 
+Lets get the easy part out of the way. Navigate to the folder where you want to keep your local files and clone down your git repository. If you don't already have a git repository go create one making sure to initialise it with a readme.md file and clone it down with into your desired folder. Go ahead and cd into that project folder
 
 ```shell
 cd <your project directory>
@@ -31,9 +31,9 @@ There isnt an example file for a post merge created in the git init process so w
 
 ```shell
 nano post-merge
-``` 
+```
 
-Next you need to copy or write out the bash script below into the file. 
+Next you need to copy or write out the bash script below into the file.
 
 ```shell
 #!/bin/bash
@@ -61,14 +61,14 @@ chmod +x post-merge
 Then return to your root directory by running `cd ..` twice in terminal.
 
 ##4. Deploying
-Its finally time to tie all of these steps together and see if all of your hardwork has payed off. First lets set up our branch structure. From the root of your directory we are going to first branch off the master branch to create a branch for our releases and then branch off of that to create a branch for our development to take place on. Usually you would have feature branches under that development branch but for this small change we dont need to worry about it. 
+Its finally time to tie all of these steps together and see if all of your hardwork has payed off. First lets set up our branch structure. From the root of your directory we are going to first branch off the master branch to create a branch for our releases and then branch off of that to create a branch for our development to take place on. Usually you would have feature branches under that development branch but for this small change we dont need to worry about it.
 
 ```shell
 git checkout -b release
 git checkout -b dev
 ```
 
-Next drop in any files you want to upload into the folder and add your files to the git stage. Remember that you dont need to include your node_modules folder since it already exits in the repo. The easiest way to do this would be to add it to a .gitignore file like 
+Next drop in any files you want to upload into the folder and add your files to the git stage. Remember that you dont need to include your node_modules folder since it already exits in the repo. The easiest way to do this would be to add it to a .gitignore file like
 
 ```shell
 echo 'node_modules' > .gitignore
@@ -103,18 +103,23 @@ Next we need to navigate into our working directory.
 
 ```shell
 cd /var/www/html
-``` 
+```
 
-If this is your first time deploying and you followed along with my setup process you already have an app running from this directory with the name `hello.js`. We are just going to go ahead and remove that app from PM2 and start our new app. You can skip this step in all future deployments.
+Now we are just going to go ahead and start our new app. In your next deployment you should use the next step and skip this one.
 
 ```shell
-pm2 delete all
-sudo rm hello.js
+sudo npm install -g pm2
 pm2 start <your apps starting point>.js
 ```
 
-All thats left to do is restart PM2! Remember to do this everytime you deploy to your server so that PM2 actually knows it needs to make changes on your app.
+Remember to do this everytime you deploy to your server so that PM2 actually knows it needs to make changes on your app.
 
 ```shell
 pm2 restart all
+```
+
+Finally just restart nguni and everything should be up and running!
+
+```shell
+sudo systemctl reload nginx
 ```

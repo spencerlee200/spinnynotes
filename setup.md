@@ -215,7 +215,7 @@ cd /var/www/html
 This next step is admittedly pretty tedious and annoying. Because I created a dependency heavy project there are quite a lot of packages that need to install. To simplify this, I've just chained a massive list of commands. 
 
 ```shell
-sudo npm install body-parser connect-ensure-login dotenv ejs express express-session glob mongoose passport passport-github2 passport-google-oauth20 passport-local pug request request-promise
+sudo npm install pm2 body-parser connect-ensure-login dotenv ejs express express-session glob mongoose passport passport-github2 passport-google-oauth20 passport-local pug request request-promise
 ```
 
 <a name="6"></a>
@@ -231,7 +231,6 @@ cd /var/repos
 Finally lets create our repo for our node app. I decided to call mine `node.git`. 
 
 ```shell
-cd /var/repos
 mkdir node.git
 ```
 
