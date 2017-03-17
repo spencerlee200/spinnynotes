@@ -1,98 +1,85 @@
-#Deploying static projects utilizing Git hooks
-
-##Prerequisites
+# Deploying a node project with codeship
+## Prerequisites
 * You must have [git](https://git-scm.com/downloads) and [xcode](https://developer.apple.com/xcode/) installed
-* You must have a [Ubuntu 16.04.02]() server set up
+* You must have a [Ubuntu 16.04.02](https://github.com/spencerlee200/spinnynotes/blob/master/setup.md) server set up
 
-##1. Setting up your local repo
+## 1. Setting up your local repo
 Lets get the easy part out of the way. Navigate to the folder where you want to keep your local files and clone down your git repository. If you don't already have a git repository go create one making sure to initialise it with a readme.md file and clone it down with into your desired folder. Go ahead and cd into that project folder 
 
 ```shell
 cd <your project directory>
 ```
 
-We also need to go ahead and add in our remote that we created on `/var/repos` in the setup for this static build. To add this just copy the line below and change `<user>` to your ssh users name, `<your project name>` with your projects name, and `<server ip>` to your servers IP. Git will handle the rest.
+## 2. Adding CodeShip to your project
+Next we are going to add CodeShip to our project. Thankfully you only have to go through this process the one time. To get started head over to codeship.com and make a free account. Once you are logged in hit the new project button.
+
+You will be presented with three options, github, bitbucket, and gitlabs. Click on the github icon on the far left.
+![Connecting scm](http://i.imgur.com/IwdsBtW.png)
+
+Next you are going to be prompted to enter the cloning URL for your github repository. Go copy that from your repo and paste it in the box.
+![Connect your repo](http://i.imgur.com/kJMvbmt.png)
+
+Next you will be prompted to pick a package. Unless you plan on going way outside of this projects scope you shouldnt need anymore than the basic package.
+
+![packages](http://i.imgur.com/qP1rDBC.png)
+
+After that you will be asked to verify some test scripts. For now we are not going to be worrying about those but if you wanted to add tests into your pipeline that would be a great place to do it. Hit save and go to dashboard to continue on to the next step.
+
+![continue](http://i.imgur.com/mHt7IH9.png)
+
+Now you need to find the settings menu in the top right. Click on it and navigate to the deployment page, as seen in the image below.
+
+![menu](http://i.imgur.com/zaCwN0G.png)
+
+Once you are on that page you will see a form that looks like this. Whenever codeship sees an action has occured on the branch that you name it is going to run our deployment script. To fix in our pipeline that is going to be on release for staging and master for production. So you will need to repeat this step twice to make a pipeline for each. All you have to change is the server IP in the custom script.
+
+![form](http://i.imgur.com/bFA6GaC.png)
+
+The next screen you get will give you a bunch of options for scripts. Scroll to the bottom and select the ever faithful custom script module.
+
+![custom script](http://i.imgur.com/GBbFPeU.png)
+
+Now just add in the line below replacing the IP with the IP of whatever server you are deploying to and the path with the path to your projects working directory you configured earlier on the server be it production or staging (`var/www/html/<your project name>`).. I've also typed it into a code block for your convenience. 
+
+![the script](http://i.imgur.com/d6aygP2.png)
 
 ```shell
-git remote add Production ssh://<user>@<your production ip>:/var/repos/<your project name>.git
+rsync -avz ~/clone/ root@<your server IP>:/path/on/server/
 ```
 
-##2. Creating your git hooks
+The next and final steps are simple. Navigate back to that same settings menu from earlier and go to the settings page. Here you will find an SSH key box like the one below.
 
-Now its time to start creating the githooks that will allow for the automation of certain processes in your deployment pipeline. To get started navigate inside of the hooks folder in your `.git` directory
+![key](http://i.imgur.com/I7RuzWk.png)
+
+Copy the entire contents of that box and then follow the commands below to get into the SSH key access file on your server.
 
 ```shell
-cd .git/hooks
+ssh root@<your server IP>
+cd .ssh 
+nano authorized_keys
 ```
 
-###post-merge
+Now just paste in that SSH key on a new line, save the file, and exit. Thats all there is to it! Now as long as you follow the deployment process below you can push deployments in as little as one line from the development branch.
 
-There isnt an example file for a post merge created in the git init process so we are going to have to create this file ourselves. First lets create the file:
-
-```shell
-nano post-merge
-``` 
-
-Next you need to copy or write out the bash script below into the file. 
-
-```shell
-#!/bin/bash
-branch=$(git symbolic-ref --short HEAD)
-
-if [[ ${branch} == "release" ]];
-        then
-        echo "Pushing to remote Production server"
-        git push Production release:master
-        exit
-else
-        echo "Branches merged. Remote not updated"
-        exit
-fi
-```
-
-To explain what this is doing in greater detail, the variable branch is being set to the name of the current git branch and then it is being compared to the string "release". In my git workflow I only want to push code live if a merge occurs on my release branch. You could change this to any branch that you wanted or just leave it and use the git workflow that I outline later in this tutorial. From the results of that conditional the hooks either pushes the code to the remote repository or it exits after informing you if it succeeded or not.
-
-We also need to give this hook the ability to be executed with the line below:
-
-```shell
-chmod +x post-merge
-```
-
-Then return to your root directory by running `cd ..` twice in terminal.
-
-##4. Deploying
-Its finally time to tie all of these steps together and see if all of your hardwork has payed off. First lets set up our branch structure. From the root of your directory we are going to first branch off the master branch to create a branch for our releases and then branch off of that to create a branch for our development to take place on. Usually you would have feature branches under that development branch but for this small change we dont need to worry about it. 
+## 3. Deploying
+First lets set up our branch structure. From the root of your directory we are going to first branch off the master branch to create a branch for our releases and then branch off of that to create a branch for our development to take place on. Under dev you should be creating feature branches that you merge back into dev. For this example though we are just going to work directly on dev.Lets go ahead and create our release and dev branch. 
 
 ```shell
 git checkout -b release
+git push origin release
 git checkout -b dev
 ```
 
-Next drop in any files you want to upload into the folder and add your files to the git stage. Remember that you dont need to include your node_modules folder since it already exits in the repo. The easiest way to do this would be to add it to a .gitignore file like 
+Next drop in any files you want to upload into the folder and add your files to the git stage.
 
 ```shell
-echo 'node_modules' > .gitignore
-git add .
+bash deploy.sh
 ```
 
-Next we have to commit it, just like we normally would in a git workflow.
+Its going to ask you to enter a commit message and once you’ve done that everything will be pushed to github. Now you just have to create a pull request to merge dev into release and when that goes through codeship will automatically deploy your project.
 
-```shell
-git commit -m "Your descriptive commit message here"
-```
 
-Now we need to switch back to our release branch and merge in our dev branch so that the two are even. Once you've done this your humans.text file should be sent to your virtual environment.
-
-```shell
-git checkout release
-git merge dev
-```
-
-If this all works then you should see a message like the one below confirming your files have been sent to the remote repository. Now if you ssh into your virtual server all your added files should be there!
-
-![Deployment success](http://i.imgur.com/SHWYjOH.png)
-
-## 5. Enabling your site
+## 4. Enabling your site
 Because this a node application there is actually one more step that is neccesary for our deployment process. First we need to SSH into our server.
 
 ```shell
