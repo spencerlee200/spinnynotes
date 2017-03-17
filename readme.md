@@ -6,6 +6,7 @@
 ## 1. Setting up your local repo
 Lets get the easy part out of the way. Navigate to the folder where you want to keep your local files and clone down your git repository. If you don't already have a git repository go create one making sure to initialise it with a readme.md file and clone it down with into your desired folder. Go ahead and cd into that project folder 
 
+
 ```shell
 cd <your project directory>
 ```
@@ -40,13 +41,11 @@ The next screen you get will give you a bunch of options for scripts. Scroll to 
 ![custom script](http://i.imgur.com/GBbFPeU.png)
 
 Now just add in the line below replacing the IP with the IP of whatever server you are deploying to and the path with the path to your projects working directory you configured earlier on the server be it production or staging (`var/www/html/<your project name>`).. I've also typed it into a code block for your convenience. 
-
 ![the script](http://i.imgur.com/d6aygP2.png)
 
 ```shell
 rsync -avz ~/clone/ root@<your server IP>:/path/on/server/
 ```
-
 The next and final steps are simple. Navigate back to that same settings menu from earlier and go to the settings page. Here you will find an SSH key box like the one below.
 
 ![key](http://i.imgur.com/I7RuzWk.png)
@@ -90,18 +89,23 @@ Next we need to navigate into our working directory.
 
 ```shell
 cd /var/www/html
-``` 
+```
 
-If this is your first time deploying and you followed along with my setup process you already have an app running from this directory with the name `hello.js`. We are just going to go ahead and remove that app from PM2 and start our new app. You can skip this step in all future deployments.
+Now we are just going to go ahead and start our new app. In your next deployment you should use the next step and skip this one.
 
 ```shell
-pm2 delete all
-sudo rm hello.js
+sudo npm install -g pm2
 pm2 start <your apps starting point>.js
 ```
 
-All thats left to do is restart PM2! Remember to do this everytime you deploy to your server so that PM2 actually knows it needs to make changes on your app.
+Remember to do this everytime you deploy to your server so that PM2 actually knows it needs to make changes on your app.
 
 ```shell
 pm2 restart all
+```
+
+Finally just restart nguni and everything should be up and running!
+
+```shell
+sudo systemctl reload nginx
 ```
